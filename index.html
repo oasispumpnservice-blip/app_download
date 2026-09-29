@@ -96,10 +96,18 @@
     </div>
     <div class="logo">오아시스펌프</div>
     <div class="subtitle">해당 페이지로 이동 중입니다. 잠시만 기다려 주세요.<br>페이지가 닫히지 않으면 이동 확인 후 닫으셔도 됩니다.</div>
-    <button class="close-btn" onclick="window.close()">닫기</button>
+    <button class="close-btn" onclick="closeThisTab()">닫기</button>
   </div>
 
   <script>
+    // ponytail: browsers block window.close() on tabs they didn't open via script,
+    // so this can only ever be a best-effort attempt (some in-app browsers allow it,
+    // most normal Chrome/Safari tabs will just ignore it) — no full workaround exists.
+    function closeThisTab() {
+      try { window.open("", "_self"); window.close(); } catch (e) {}
+      try { window.close(); } catch (e) {}
+    }
+
     (function () {
       var ua = navigator.userAgent || navigator.vendor || window.opera;
       var appStore = "https://apps.apple.com/kr/app/%EC%98%A4%EC%95%84%EC%8B%9C%EC%8A%A4%ED%8E%8C%ED%94%84/id6793337409";
@@ -111,10 +119,7 @@
       var target = isIOS ? appStore : isAndroid ? playStore : webLink;
 
       window.location.href = target;
-      // ponytail: window.close() only works on tabs opened by script/link (no back
-      // history); on a directly-typed URL most browsers silently ignore it, which is
-      // why the manual "닫기" button stays as a fallback.
-      setTimeout(function () { try { window.close(); } catch (e) {} }, 300);
+      setTimeout(closeThisTab, 300);
     })();
   </script>
 </body>
